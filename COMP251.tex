@@ -1,0 +1,1222 @@
+\documentclass[11pt, a4paper, oneside]{book}
+
+\usepackage{titlesec}
+\usepackage{lipsum}
+\usepackage{color}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+%\usepackage{movie15}
+
+
+\usepackage{amsthm}
+
+\usepackage{geometry}
+\geometry{left=2cm,right=2cm,top=1.5cm,bottom=1.5cm}
+
+\usepackage{array}
+\usepackage{graphics}
+\usepackage{amsmath}
+\usepackage{color}   %May be necessary if you want to color links
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=black,  %choose some color if you want links to stand out
+}
+
+\usepackage[T1]{fontenc}
+\usepackage{titlesec, blindtext, color}
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\Huge\bfseries}
+\titlespacing{\chapter}{0pt}{\parskip}{*0.5}
+
+\newtheoremstyle{theoremdd}% name of the style to be used
+  {\topsep}% measure of space to leave above the theorem. E.g.: 3pt
+  {\topsep}% measure of space to leave below the theorem. E.g.: 3pt
+  {\itshape}% name of font to use in the body of the theorem
+  {10pt}% measure of space to indent
+  {\bfseries}% name of head font
+  {. ---}% punctuation between head and body
+  { }% space after theorem head; " " = normal interword space
+  {}
+
+\theoremstyle{theoremdd}
+\newtheorem*{definition}{Definition}
+
+\newtheorem{theorem}{Theorem}[chapter]
+
+\newtheorem{corollary}{Corollary}
+
+\newtheorem{example}{Example}[chapter]
+
+\usepackage{tikz}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+
+\usepackage[listings]{tcolorbox}
+\tcbuselibrary{listings,theorems}
+
+\newtcbtheorem[number within=section]{mytheo}{Theorem}%
+{colback=white,colframe=black!,fonttitle=\bfseries}{th}
+
+\usepackage[ruled,vlined,algosection]{algorithm2e}
+
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newtheorem{lemma}{Lemma}[section]
+
+\author{Wenzong Xia}
+\title{COMP251 Winter 2018}
+\begin{document}
+\maketitle
+\tableofcontents
+\frontmatter
+
+%\chapter{Disclaimer}
+%The materials of this document was taken from Professor Adrian Vetta's lecture for COMP251 in Winter 2018. Extra materials from the material are taken from recommended list of textbooks: \textit{Algorithem Design} by \textit{Jon Kleinberg}. 
+
+\chapter{Prerequisite Materials}
+\section*{Time Complexity}
+In computer science, the \textit{time complexity} is the computational complexity that describes the amount of time it takes to run an algorithm. Time complexity is commonly estimated by counting the number of elementary operations performed by the algorithm, supposing that each elementary operation takes a fixed amount of time to perform. Thus, the amount of time taken and the number of elementary operations performed by the algorithm are taken to differ by at most a constant factor. 
+
+\subsection*{Big-O}
+Big-O $(O())$ is one of five standard asymptotic notations. In practice, it is used as a \textit{loose upper-bound}.
+\begin{definition}
+(Big-O, $O()$): Let $f(n)$ and $g(n)$ be functions that map positive integers to positive real numbers. We say that $f(n)$ is $O(g(n))$ if there exists a real constant $c>0$ and there exists an integer constant $n_{0} > 1$ such that $f(n) \leq c*g(n)$ for every integer $n\geq n_{0}$.
+\end{definition}
+
+\subsection*{Little-O}
+Little-o $o()$ is used to describe an upper-bound that cannot be tight. 
+\begin{definition}
+(Little-o, $o()$): Let $f(n)$ and $g(n)$ be functions that map positive integers to positive real numbers. We say that $f(n)$ is $o(g(n))$ if for any real constant $c>0$, there exists an integer constant $n_{0} > 1$ such that $f(n) < c*g(n)$ for every integer $n\geq n_{0}$.
+\end{definition}
+
+\subsection*{Big-Omega}
+Big-Omega $\Omega()$ is the tight lower bound notation.
+\begin{definition}
+(Big-Omega, $\Omega()$): Let $f(n)$ and $g(n)$ be functions that map positive integers to positive real numbers. We say that $f(n)$ is $\Omega(g(n))$ if there exists a real constant $c > 0$ and there exists an integer constant $n_{0} \geq 1$ such that $f(n) \geq c*g(n)$ for every integer $n>n_{0}$.
+\end{definition}
+
+\subsection*{Little-Omega}
+Little-Omega, $\omega()$ describes the loose lower bound.
+\begin{definition}
+(Little-Omega, $\omega()$): Let $f(n)$ and $g(n)$ be functions that map positive integers to positive real numbers. We say that $f(n)$ is $\omega(g(n))$ if for any real constant $c > 0$, there exists an integer constant $n_{0} \geq 1$ such that $f(n) > c*g(n)$ for every integer $n \geq n_{0}$.
+\end{definition}
+\begin{center}
+\includegraphics[width=80mm]{./img/timecomplexity.png}
+\end{center}
+\newpage
+
+\section*{Fundamental Algorithms}
+\subsection*{BubbleSort Algorithms}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{BubbleSort$(x_{1},\cdots,x_{n})$}
+$counter=0$\;
+continue=true\;
+$n=length(S)$\;
+\While{continue = true}{
+continue=false\;
+\For{$i=1$ to $n-1$}{
+	\uIf{$A[i-1]>A[i]$}{
+		swap($A[i-1],A[i]$)\;
+		swapped = true\;
+	}
+}
+$counter++$\;
+}
+\caption{BubbleSort Algorithm}
+\end{algorithm}
+\begin{center}
+\includegraphics[width=70mm]{./img/bubbleshort.png}
+\end{center}
+\begin{remark}
+The runtime of the BubbleSort Algorithm is $O(n^2)$.
+\end{remark}
+
+
+%\section*{QuickSort Algorithm}
+
+%\section*{InsertionSort Algorithm}
+
+
+
+\subsection*{MergeSort Algorithm}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{MergeSort$(x_{1},\cdots,x_{n})$}
+  \eIf{$n=1$}{
+	output $x_{1}$\;
+   }{
+   output Merge\{MergeSort{$(x_{1}, \cdots, x_{\floor*{\frac{n}{2}}})$, MergeSort$(x_{\floor*{\frac{n}{2}+1}},\cdots, x_{n})$}\}\;
+  }
+ \caption{MergeSort Algorithm}
+\end{algorithm}
+\begin{center}
+\includegraphics[width=70mm]{./img/mergesortimg.png}
+\end{center}
+\begin{remark}
+The runtime of the BubbleSort Algorithm is $O(n^2)$.
+\end{remark}
+
+\subsection*{BinarySearch Algorithm}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{BinarySearch$(a_{1},\cdots,a_{n})$; k}
+\While{$n>0$}{
+	\uIf{$a_{\ceil*{\frac{n}{2}}} = k$}{
+		Output YES\;
+	}
+	\uElseIf{$a_{\ceil*{\frac{n}{2}}} > k$}{
+		Output BinarySearch$(a_{1},\cdots,a_{\ceil*{\frac{n}{2}}-1})$; k\;
+	}
+	\uElseIf{$a_{\ceil*{\frac{n}{2}}} < k$}{
+		Output BinarySearch$(a_{\ceil*{\frac{n}{2}}-1}),\cdots,a_{n-1},a{n})$; k\;
+	}
+}
+	Output NO\;
+\caption{BinarySearch Algorithm}
+\end{algorithm}
+\begin{center}
+\includegraphics[width=90mm]{./img/binarysearch.png}
+\end{center}
+\begin{remark}
+The runtime of the BinarySearch Algorithm is $O(n\log n)$.
+\end{remark}
+
+\pagebreak
+\section*{Graph Theory}
+\begin{definition}
+\textbf{Undirected Graphs}: An \underline{undirected} graph $G=(V,E)$ consists of:
+\begin{itemize}
+\item A set $V$ of vertices (or nodes).
+\item A set $E$ of edges (or links) denoting \underline{unordered} vertex pairs.
+\item We set $n=|V|$ to be the \underline{cardinality} of the vertex set.
+\item We set $n=|E|$ to be the \underline{cardinality} of the edge set.
+\end{itemize}
+\end{definition} 
+
+
+\begin{definition}
+\textbf{Directed Graphs}: An \underline{directed} graph $G=(V,E)$ consists of:
+\begin{itemize}
+\item A set $V$ of vertices (or nodes).
+\item A set $A$ of \textbf{arcs} (directed edges) denoting \underline{ordered} vertex pairs.
+\item We set $n=|V|$ to be the \underline{cardinality} of the vertex set.
+\item We set $n=|A|$ to be the \underline{cardinality} of the arc set.
+\end{itemize}
+\end{definition}
+
+\begin{definition}
+\textbf{Adjacency Matrix(undirected graphs)}: For an \underline{indirected} graph, an adjacency matrix $M$ has the properties that: 
+\begin{itemize}
+\item There is a \textbf{row} for each vertex.
+\item There is \textbf{column} for each vertex.
+\item The $ij-th$ entry of the matrix is defined by: \\
+\[
+M_{ij} = \begin{cases}
+          1 (i,j) \in E \\
+          0 (i,j) \notin E \\
+         \end{cases}
+\]
+\end{itemize} 
+\begin{center}
+\includegraphics[width=70mm]{./img/adjmatrixundirected.png}
+\end{center}
+\end{definition}
+
+
+\begin{definition}
+\textbf{Adjacency Matrix(directed graphs)}: For an \underline{directed} graph, an adjacency matrix $M$ has the properties that: 
+\begin{itemize}
+\item There is a \textbf{row} for each vertex.
+\item There is \textbf{column} for each vertex.
+\item The $ij-th$ entry of the matrix is defined by: \\
+\[
+M_{ij} = \begin{cases}
+          1 (i,j) \in A \\
+          0 (i,j) \notin A \\
+         \end{cases}
+\]
+\end{itemize} 
+\begin{center}
+\includegraphics[width=70mm]{./img/adjmatrixdirected.png}
+\end{center}
+\end{definition}
+
+\begin{definition}
+\textbf{Adjacency List(undirected graph)}: An undirected graph can be stored using adjacency lists. For each vertex $i$, we store a list of the \textbf{neighbors} of $i$. 
+\begin{center}
+\includegraphics[width=70mm]{./img/adjlistundirected.png}
+\end{center}
+\end{definition}
+
+
+\begin{definition}
+\textbf{Adjacency List(directed graph)}: A directed graph can be stored using adjacency lists. For each vertex $i$, we store a list of the \textbf{in-neighbors} of $i$. For each vertex $i$, we also store a list of the \textbf{out-neighbors} of $i$. Equivalently, we store a list of the edges \textbf{incident} to each vertex.
+\begin{center}
+\includegraphics[width=70mm]{./img/adjlistdirected.png}
+\end{center}
+\end{definition}
+
+\begin{remark}
+Adjacency Lists versus Adjacency Matrices: The main difference is in the amount of space required. 
+\begin{itemize}
+\item An adjacency matrix requires storing $\omega (n^2)$ numbers. 
+\item An adjacency list requires storing $\omega (m)$ numbers. 
+\item In any graph $m=O(n^2)$ and often $m \leq n^2$. \Rightarrow In \textbf{sparse graphs}, it is much more preferable to use adjacency lists. 
+\end{itemize}
+\end{remark}
+
+\section*{Graph Structures}
+\begin{definition}
+\textbf{Walks}: a walk is a list of vertices $\{v_{0},v_{1},v_{2},\cdots,v_{l}\}$ such that $(v_{i},v_{i+1}) \in E$ for all $0\leq 1 \leq l$.
+\end{definition}
+
+\begin{definition}
+\textbf{Circuits}: a circuit is a walk $\{v_{0},v_{1},v_{2},\cdots,v_{l}\}$ where $v_{0}=v_{l}$. (A circuit is a closed walk). An \textbf{Eulerian Circuit} is a circuit that uses every edge exactly once. 
+\end{definition}
+
+\begin{definition}
+\textbf{Paths}: a path is a walk where every vertex is \underline{distinct}.
+\end{definition}
+
+\begin{definition}
+\textbf{Cycles}: a cycle is a walk $\{v_{0},v_{1},v_{2},\cdots,v_{l}\}$where every vertex is \underline{distinct}. except for the end-vertices $v_{0}=v_{l}$. An \textbf{Hamilton Cycle} is a cycle that uses every vertex exactly once. 
+\end{definition}
+
+\begin{definition}
+A graph is \textbf{connected} if for every pair of vertices $u,v\in V$, it is possible to walk from $v$ to $u$.  \\
+A graph is \textbf{disconnected} if there exists a pair of vertices $u,v\in V$, for which there is no possible walk from $u$ to $v$. 
+\begin{center}
+\includegraphics[width=40mm]{./img/connectedgraph.png}
+\includegraphics[width=40mm]{./img/disconnectedgraph.png}
+\end{center}
+\end{definition}
+
+\begin{definition}
+\textbf{Graph Components}: A connected subgraphs are called the components of the graph. Thus a \underline{connected graph} has exactly \underline{one} component.
+\begin{center}
+\includegraphics[width=50mm]{./img/graphcomponent.png}
+\end{center} 
+\end{definition}
+
+\subsection*{Trees}
+\begin{definition}
+\textbf{Tree}: A tree is a \underline{connected component} with \underline{no cycles}. \textbf{Forest}: A forest is a graph whose components are all trees.  A tree is \textbf{spanning} if it contains every vertex in the graph.
+\begin{center}
+\includegraphics[width=50mm]{./img/tree.png}
+\end{center} 
+\end{definition}
+
+\begin{definition}
+\textbf{Matching}: A matching is a set of vertex-disjoint edges. Hence, each vertex is incident to at most one edge in the matching. A matching is \textbf{perfect} if every vertex is incident to an edge in the matching. 
+\begin{center}
+\includegraphics[width=50mm]{./img/matching.png}
+\end{center}
+\end{definition}
+
+\begin{definition}
+\textbf{Cliques}: A clique is a set of pairwise adjacent vertices. 
+\begin{center}
+\includegraphics[width=50mm]{./img/clique.png}
+\end{center}
+\end{definition}
+
+\begin{definition}
+\textbf{Independent Sets}: An independent sets (stable set) is a set of pairwise non-adjacent vertices.
+\begin{center}
+\includegraphics[width=50mm]{./img/independentset.png}
+\end{center}
+\end{definition}
+
+\begin{definition}
+\textbf{Bipartite Graphs}: In a bipartite graph, the vertex set can be partitioned as $V=X\cup Y$ such that every edge has one end-vertex in $X$ and one end-vertex in $Y$.
+\begin{center}
+\includegraphics[width=50mm]{./img/bipartitegraph.png}
+\end{center}
+\end{definition}
+
+\section*{Some Theorems on Undirected Graphs}
+\begin{lemma}
+Let $\Gamma(v)=\{u:(u,v)\in E\}$ be the set of neighbors of $v$. The degree, $deg(v)$, of a vertex $v$ is a cardinality of $\Gamma(v)$. The \textbf{Handshaking Lemma}: In an undirected graph, there are an even number of vertices with odd degree. 
+\end{lemma}
+
+\begin{proof}
+We have: 
+\begin{align*}
+2\cdot |E| & = \sum_{v\in V} deg(v) \\&
+             = \sum_{v\in O} deg(v) + \sum_{v\in \varepsilon} deg(v) \\&
+             = \sum_{v\in O}deg(v) = 2\cdot |E| - \sum_{v\in \varepsilon} deg(v)
+\end{align*}
+\end{proof}
+
+\begin{theorem}
+\textbf{Euler's Theorem}: An undirected graph contains an Euler Circuit \underline{if and only if} every vertex has even edges. (Euler Circuit: a path starting and ending on the same vertex which visits each edge exactly once).
+\end{theorem}
+
+\section*{Theorem on Trees}
+\begin{definition}
+\textbf{Leaves}: A vertex with degree one in a tree is called a leaf. 
+\end{definition}
+
+\begin{theorem}
+A tree with $n$ vertices has $n-1$ edges.
+\end{theorem}
+
+\begin{theorem}
+\textbf{Hall's Condition}: $\forall B \subseteq X$, $|\Gamma (B)| \geq |B|$. \textbf{Hall's Theorem}: A bipartite graph, with $|X|=|Y|$, contains a perfect matching \underline{if and only if} Hall's Condition is satisfied. 
+\end{theorem}
+
+\section*{Breadth First Search}
+\subsection*{Generic Search Algorithm}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Search Algorithm$(*,r)$}
+Put $(*,r)$ into a bag\;
+\While{the bag is not empty}{
+	Remove $(u,v)$ from the bag\;
+	\uIf{$v$ is unmarked}{
+		Mark $v$\;
+		Set $p(v)\leftarrow u$ (set $u$ to be the predecessor of $v$)\;
+		\For{each arc $(v,u)$}{
+			Put $(v,u)$ into the bag\;
+		}
+	}
+}
+\caption{Generic Search Algorithm}
+\end{algorithm}
+\begin{remark}
+We search each arc out of v only once, when v is first marked. The arc is then added to the bag once and later removed from the bag. Hence, the runtime of the algorithm is: 
+\begin{center}
+Runtime $=O(m)$. It is a \textbf{linear time} algorithm. 
+\end{center}
+\end{remark}
+
+\begin{theorem}
+Let $G$ be a connected, undirected graph. Then the search algorithm find every vertex in $G$. 
+\end{theorem}
+\begin{proof}
+We must show that each vertex is marked by the search algorithm. We prove this by induction on the smallest number of $k$ of edges in a path from the vertex to the root. \\
+\underline{Base Case}: $k=0$. Then $v$ is the root vertex $r$. But $r$ is the first vertex marked in the algorithm, so the base case holds. \\
+\underline{Induction Hypothesis}: Assume any vertex $v$ has a path of $k-1$ (or fewer) edges to the root $r$ is marked. \\
+\underline{Induction Step}: Assume there is a path $P$ with $k$ edges from $v$ to $r$. Specifically let $P=\{v=v_{k},v_{k-1},\cdots,v_{1},v_{0}=r\}$. Thus, there is a path $Q$ with $k-1$ edges from $u=v_{k-1}$ to $r$. That is, $Q=\{u=v_{k-1}.\cdots, v_{1},v_{0}=r\}$. So, by the induction hypothesis, the vertex $u$ is marked. After we mark $u$, we place the edges incident to it in the bag. $\Rightarrow$ The edge $(u,v)$ is added to the bag. Thus, when $(u,v)$ is removed from the bag we will mark $v$ (if it is not already marked). 
+\end{proof}
+For directed graphs, a similar argument proves that each vertex that has a directed path to it from the root is marked. 
+
+\section*{Search Trees}
+Observe that each non-root vertex has exactly one predecessor. 
+\begin{theorem}
+Let $G$ be a connected, undirected graph. Then the predecessor edges from a tree rooted at $r$. 
+\end{theorem}
+\begin{proof}
+By induction on the number $k$ of marked vertices. \\
+\underline{Base Case}: $k=1$. The root vertex $r$ is the first vertex marked. $\Rightarrow$ Trivially, we have a tree rooted at $r$, so the base case holds. \\
+\underline{Induction Hypothesis}: Assume the predecessor edges for the first $k-1$ marked vertices from a tree rooted at $r$. \\
+\underline{Induction Step}: Let $v$ be the $k-th$ vertex to be marked. Assume $v$ was marked when we remove the edge $(u,v)$. $\Rightarrow$ $u=P(v)$. But $(u,v)$ was added to the bag when we marked vertex $u$. $\Rightarrow$ Vertex $u$ is in the set $S$ of the first $k-1$ vertices to be marked. by induction hypothesis, the predecessor edges for $S$ form a tree $T$ rooted at $r$. $\Rightarrow T\cup (p(v),v)$ is a tree rooted at $r$ in the first $k$ marked vertices. 
+\end{proof}
+\begin{remark}
+There is some flexibility in how to implement the search algorithm. If the bag contains many arcs, which one should we remove? In fact, in computer science, the ``bag'' is just short-hand for a data structure. 
+\begin{align*}
+& \textbf{Queue} \Rightarrow Breadth \ First \ Search \\&
+  \textbf{Stack} \Rightarrow Depth \ First \ Search \\&
+  \textbf{Priority Queue} \Rightarrow Minimum \ Spanning \ Tree \ Algorithm.
+\end{align*}
+\end{remark}
+
+\subsection*{Breadth First Search (BFS)}
+Using a \textbf{Queue(FIFO)} data structure produces: 
+\begin{algorithm}
+\SetAlgoLined
+\KwResult{Breadth First Search Algorithm$(*,r)$}
+Put $(*,r)$ into a Queue\;
+\While{the Queue is not empty}{
+	Remove $(u,v)$ from the Queue\;
+	\uIf{$v$ is unmarked}{
+		Mark $v$\;
+		Set $p(v)\leftarrow u$ (set $u$ to be the predecessor of $v$)\;
+		\For{each arc $(v,u)$}{
+			Put $(v,u)$ into the Queue\;
+		}
+	}
+}
+\caption{Breadth First Search Algorithm}
+\end{algorithm}
+\begin{center}
+\includegraphics[width=80mm]{./img/breadthfirstsearch.png}
+\end{center}
+
+\subsection*{Breadth First Search Trees}
+Since BFS uses queue, it is easy to verify that the edges are added to the queue in order of their distance from $r$ and the vertices are marked in order of their distance from r. Specifically:
+\begin{theorem}
+For any vertex $v$, the path from $v$ to $r$ given by the search tree $T$ of predecessor edges is a shortest path. 
+\end{theorem}
+\begin{center}
+\includegraphics[width=80mm]{./img/BFS2.png}
+\end{center}
+Let $S_{l}$ be the set of ``layer'' of vertices at distance $l$ from $r$ in $T$. Then a vertex $v\in S_{l}$ is also at distance $l$ from $r$ in the whole graph $G$. Thus implies for every non-tree edge $(u,v)$, $u$ and $v$ are either in the same layer of in adjacent layers. If not, we can find a shorter path to the root from $u$ to $v$. 
+
+\subsubsection*{BFS and Bipartite Graphs}
+Recall a graph $G=(V,E)$ is bipartite if $V=U\cup Y$ and every edge has exactly one end-point in $X$ and one end-point in $Y$.
+\begin{theorem}
+A graph $G$ is bipartite if and only if it contains no add length cycles.
+\end{theorem}
+\begin{proof}
+Assume $G$ contains as a subgraph an odd length cycle $C$. Let $C=\{v_{0},v_{1},v_{2},\cdot,v_{2k}\}$. WLOG we may assume vertex $v_{0}\in Y$. Therefore: $v_{0}\in Y \Rightarrow $ But $(v_{0},v_{2k})\in E$. Thus, $v_{0}\in Y \Rightarrow v_{1}\in X \Rightarrow v_{2k}\in Y$. This contradiction proves that $G$ contains no odd cycle. 
+\end{proof}
+
+
+\pagebreak
+\section*{Depth First Search (DFS)}
+Using a stack(LIFO) data structure produces: 
+\begin{algorithm}
+\SetAlgoLined
+\KwResult{Breadth First Search Algorithm$(*,r)$}
+Put $(*,r)$ into a Stack\;
+\While{the Stack is not empty}{
+	Remove $(u,v)$ from the Stack\;
+	\uIf{$v$ is unmarked}{
+		Mark $v$\;
+		Set $p(v)\leftarrow u$ (set $u$ to be the predecessor of $v$)\;
+		\For{each arc $(v,w)$}{
+			Put $(v,w)$ into the Stack\;
+		}
+	}
+}
+\caption{Breadth First Search Algorithm}
+\end{algorithm}
+\begin{center}
+\includegraphics[width=80mm]{./img/DFS.png}
+\end{center}
+Recall, we proved that the search algorithm produces a search tree. 
+\begin{theorem}
+Let $G$ be a connected, undirected graph. Then the predecessor edges form a tree rooted at $r$. However, the structure of the DFS tree is quite different from that of a BFS tree.
+\end{theorem}
+
+\begin{algorithm}
+\SetAlgoLined
+\KwResult{Depth First Search Algorithm$(r)$}
+Mark $r$\;
+\For{each edge $(r,v)$}{
+	\uIf{$v$ is unmarked}{
+		Set $p(v)\leftarrow r$ (keep track of the predecessor)\;
+		RecursiveDFS(v)\;
+	}
+}
+\caption{Breadth First Search Algorithm}
+\end{algorithm}
+
+\begin{theorem}
+Let $T$ be a DFS tree in an undirected graph $G$. Then, for every edge $(u,v)$, either $u$ is an ancestor of $v$ in $T$ or $v$ is an ancestor of $u$. 
+\end{theorem}
+\begin{proof}
+WLOG assume $u$ is marked before $v$. Consider the time $u$ is marked during RecursiveDFS(u). In RecursiveDFS(u) the algorithm examines each arc incident to $u$. \\
+\underline{Case I}: $v$ is unmarked when Recursive(u) examines $(u,v)$. Then RecursiveDFS(u) sets $P(v)\leftarrow u \Rightarrow (u,v)$ is a tree edge. \\
+\underline{Case II}: $v$ is marked when RecursiveDFS(u) examines $(u,v)$. But $v$ was marked after $u$, so it was marked during RecursiveDFS(u). Thus, we have a series of vertices $\{u=w_{0},w_{1},\cdots,w_{l-1},w_{l}=v\}$ where $p(w_{k})=w_{k-1}$ $\Rightarrow u$ is an ancestor of $v$ in $T$. $\Rightarrow (u,v)$is a back edge.
+\end{proof}
+\begin{corollary}
+Let $T$ be a DFS tree in an undirected graph $G$. Then, every non-tree edge is a back edge. 
+\end{corollary}
+
+\subsection*{Pre-visit and Post-visit}
+We can add a clock to record when we visit a vertex for the first(previsit) and last time(postvisit). 
+\subsubsection*{Caterpillar Crawls}
+The way DFS explores the vertices of the graph is like this; $Pre(v)$ is the time the caterpillar arrives at the subtree rooted at vertex $v$. $Post(v)$ is the time the caterpillar exits the subtree rooted at vertex $v$.
+\begin{center}
+\includegraphics[width=50mm]{./img/caterpillar.png}
+\includegraphics[width=58mm]{./img/caterpillar3.png}
+\end{center}
+We can represent each vertex by an interval over the real numbers. 
+\begin{center}
+\includegraphics[width=70mm]{./img/interval.png}
+\end{center}
+
+To be continued...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\chapter{Introduction}
+\section*{Good vs Bad Algorithms}
+\begin{theorem}
+(Central Paradigm of CS). An algorithm A is good if A runs in \textbf{polynomial time} in the input size n. In other words, A runs in time $T(n)=O(n^{k})$ for some constant k. \\
+Remark. ``A runs in polynomial time in the input size n'' is equivalent to the ``input size that A can solve, in a fixed amount T of time, scales multiplicity with increasing computational power''. 
+\end{theorem}
+
+We say that an algorithm is bad if it runs in \textbf{exponential time}. For example: considering the problem of sorting $n$ numbers: 
+\begin{itemize}
+	\item A Good Algorithm: \textbf{MergeSort} runs in time $O(n*logn)$ (roughly linear).
+	\item A Bad Algorithm: \textbf{BruteForce Search} runs in time $O(n*n!)$. 
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=80mm]{./img/runtime.png}
+\end{center}
+
+\section*{Software vs Hardware}
+Improvement in hardware will never overcome bad algorithm design. Indeed, current dramatic breakthroughs in CS are based upon better (faster and higher performance) algorithm techniques. 
+
+\mainmatter
+
+\part{Recursive Algorithm}
+\chapter{Divide + Conquer Algorithms}
+\noindent
+Solving a problem by reducing it (or a subproblem of it) to another problem is the most fundamental technique in algorithm design. Algorithm $A$ use another Algorithm $B$ as a sub-routine. There are numerous advantages of doing so: 
+\begin{enumerate}
+\item Code Verification: Correctness of $A$ is independent of $B$.
+\item Code Reuse: A great time saver.
+\end{enumerate}
+
+\begin{mytheo}{Divide and Conquer Algorithm}{Definition}
+Divide and Conquer Algorithm recursively breaks up a problem of size $n$ in smaller sub-problems such that: 
+\begin{itemize}
+\item There are exactly $a$ sub-problems.
+\item Each sub-problem has size at most $\frac{1}{b}*n$
+\item Once solved, the solutions to the sub-problems can be combined to produce a solution to the original problem in time $O(n^{d})$
+\end{itemize}
+Run time of a divide and conquer algorithm satisfies the recurrence: 
+\begin{equation*}
+T(n) = a*T(\frac{n}{b}) + O(n^{d})
+\end{equation*}
+\end{mytheo}
+
+\section{MergeSort}
+Here, we want to sort n numbers into non-decreasing order. \\
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{MergeSort$(x_{1},\cdots,x_{n})$}
+  \eIf{$n=1$}{
+	output $x_{1}$\;
+   }{
+   output Merge\{MergeSort{$(x_{1}, \cdots, x_{\floor*{\frac{n}{2}}})$, MergeSort$(x_{\floor*{\frac{n}{2}+1}},\cdots, x_{n})$}\}\;
+  }
+ \caption{MergeSort Algorithm}
+\end{algorithm}
+
+\begin{example}
+MergeSort example
+\begin{center}
+\includegraphics[width=90mm]{./img/mergesort.png}
+\end{center}
+\begin{remark}
+MergeSort does work: The division terminates with a set of base case of size 1. Using strong induction, and given the validity of the Merge step, we are done. (MergeSort trivially works on base case).
+\end{remark}
+\end{example}
+
+\begin{theorem}
+MergeSort runs in time $O(n\cdot \log n)$
+\begin{proof}
+First, MergeSort algorithm has the form of: 
+\begin{equation*}
+T(n) = 2T(\frac{n}{2}) + cn
+\end{equation*}
+where the first term is due to recursion on 2 problems with half the size and the second term is the linear time to merge 2 sorted lists. Also the base case is $T(n)=1$. Now, bu adding the \textbf{dummy numbers}, we may assume that $n$ is a power of two; $n=2^k$. So we have:
+\begin{align*} 
+T(n) & = 2T(\frac{n}{2}) + cn \\& 
+       = 2(2T(\frac{n}{4})+\frac{cn}{2})+cn \\&
+       = 2^2T(\frac{n}{4}) + 2cn \\&
+       = 2^3T(\frac{n}{8}) + 3cn \\&
+       = \cdots \\&
+       = 2^kT(1) + kcn \\&
+       = 2^k + kcn \\&
+       = n(1+kc)
+\end{align*}
+So, $T(n) = O(nk) = O(n\log n)$
+\end{proof}
+\end{theorem}
+
+\section{Binary Search}
+We can search for a key $k$ in a sorted array list of cardinality $n$ by using the binary search algorithm. 
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{BinarySearch$(a_{1},\cdots,a_{n})$; k}
+\While{$n>0$}{
+	\uIf{$a_{\ceil*{\frac{n}{2}}} = k$}{
+		Output YES\;
+	}
+	\uElseIf{$a_{\ceil*{\frac{n}{2}}} > k$}{
+		Output BinarySearch$(a_{1},\cdots,a_{\ceil*{\frac{n}{2}}-1})$; k\;
+	}
+	\uElseIf{$a_{\ceil*{\frac{n}{2}}} < k$}{
+		Output BinarySearch$(a_{\ceil*{\frac{n}{2}}-1}),\cdots,a_{n-1},a{n})$; k\;
+	}
+}
+	Output NO\;
+\caption{BinarySearch Algorithm}
+\end{algorithm}
+
+\begin{remark}
+BinarySearch does work: follows by strong induction.
+\end{remark}
+
+\begin{theorem}
+BinarySearch runs in time $O(\log n)$
+\begin{proof}
+First, note that: 
+\begin{equation*}
+T(n) = T(\frac{n}{2}) + c 
+\end{equation*}
+Where the first term is due to the recursion on one problem with half the size and the second term is the constant amount of additional work required. Also, the base case is $T(n)=1$. Now by adding the \textbf{dummy numbers}, we may assume the $n$ is a power of two: $n=2^k$. So, we have: 
+\begin{align*}
+T(n) & = T(\frac{n}{2}) + c \\&
+	   = (T(\frac{n}{4}) + c) + c \\&
+	   = T(\frac{n}{4}) + 2c \\&
+	   = T(\frac{n}{8}) + 3c \\&
+	   = \cdots \\&
+	   = T(\frac{n}{2^k}) + kc \\&
+	   = 1 + kc \\& 
+	   = 1 + \log n \cdot c
+\end{align*}
+Thus, $T(n) = O(\log n)$
+\end{proof}
+\end{theorem}
+
+\section{Master Theorem}
+\begin{mytheo}{Master Theorem}{}
+If $T(n) = aT(\frac{n}{b}) + O(n^d)$ for constants $a>0, b>1, d\geq 0$ then: 
+\[
+  T(n)=\begin{cases}
+               O(n^d)         	& a<b^d \ Case\ I \\
+               O(n^d\log n)   	& a=b^d \ Case\ II\\
+               O(n^(\log_b a))  & a>b^d \ Case\ III\\
+            \end{cases}
+\]
+\end{mytheo}
+
+To prove, we need two following facts: 
+\begin{lemma}
+$\sum_{k=0}^{l}r^k = \frac{1-r^(l+1)}{1-r}$ for any $r \neq 1$
+\end{lemma}
+
+\begin{proof}
+We have: 
+\begin{align*}
+(1-r)\sum_{k=0}^{l}r^k & = \sum_{k=0}^{l}r^k - \sum_{k=1}^{l+1}r^k \\&
+						 = r^{0} - r^{l+1} \\&
+						 = 1 - r^{l+1}
+\end{align*}
+Divide both sides by $(1-r)$ gives the result.
+\end{proof}
+
+\begin{lemma}
+$x^{\log_{b} Y} = y^{\log_{b} X}$
+\end{lemma}
+\begin{proof}
+Observe that, by the power rule of algorithms, $\log_{b} Z^{p} = p\cdot \log_{b}{Z}$
+\begin{align*}
+\log_{b} X \cdot \log_{b} Y & = \log_{b} Y^{\log_{b} X} \\ 
+\log_{b} Y \cdot \log_{b} X & = \log_{b} X^{\log_{b} Y} \\
+\log_{b} Y^{\log_{b} X} = \log_{b} X^{\log_{b} Y} & \Rightarrow x^{\log_{b} Y} = y^{\log_{b} X}
+\end{align*}
+
+\end{proof}
+Now we could prove the Master Theorem: 
+\begin{proof}
+Assume $n$ is a power of $b:n=b^{l}$ 
+\begin{align*}
+T(n) & = n^d + a(\frac{n}{b})^d + a^2(\frac{n}{b^2})^d + \cdots + a^l(\frac{n}{b^l})^d \\&
+       = n^d(1+a(\frac{1}{b})^d + a^2(\frac{1}{b^2})^d + \cdots + a^l(\frac{1}{b^l})^d) \\&
+       = n^d(1+\frac{a}{b^d} + (\frac{a}{b^d})^2 + \cdots + (\frac{a}{b^d})^l)
+\end{align*}
+\begin{description}
+\item [Case 1:] $\frac{a}{b^d}<1$ \\
+\begin{itemize}
+\item Set $r=\frac{a}{b^d}$, then $T(n)=n^d\cdot \sum_{k=0}^{l}r^k$
+\item Apply Lemma 1, we know that: $\sum_{k=0}^{l}r^k = \frac{1-r^(l+1)}{1-r} \leq \frac{1}{1-r} = O(1)$
+\item Therefore, $T(n) \leq n^d \cdot \frac{1}{1-\frac{a}{b^d}} = n^d\cdot \frac{b^d}{b^d-a} = O(n^d)$
+\end{itemize}
+\item [Case 2:] $\frac{a}{b^d}=1$
+\begin{itemize}
+\item $T(n) = n^d(l+1)$
+\item But $n=b^l$, so $l=\log_{b} n$
+\item As $b$ is a constant greater than 1, $T(n) = O(n^d\cdot \log n)$
+\end{itemize}
+\item [Case 3:] $\frac{a}{b^d}>1$
+\begin{itemize}
+\item Set $r=\frac{a}{b^d}$, then $T(n)=n^d\cdot \sum_{k=0}^{l}r^k$
+\item Apply Lemma 1 gives: $\sum_{k=0}^{l} = \frac{r^(l+1)-1}{r-1} \leq \frac{r^(l+1)}{r-1} = O(r^l)$
+\item $T(n) = O(n^d\cdot r^l)$
+\item $n^d\cdot r^l = n^d\cdot (\frac{a}{b^d})^l = (\frac{n}{b^l})\cdot a^l = 1\cdot a^l = a^{\log_{b} n} = n^{log_{b} a}$
+\end{itemize}
+\end{description}
+\end{proof}
+
+\section{The Recursion Tree Method}
+Master theorem is a special case of the recursion tree method. Specifically, we model the divide and conquer recursive formula by a tree: $T(n) = a\cdot T(\frac{n}{b}) + O(n^d)$; The root node of the tree have a label of $n$. The root has $a$ children each with label $\frac{n}{b}$. The process stops at the leaves (base case) where $\frac{n}{b^l}=1$.
+\begin{center}
+\includegraphics[width = 80mm]{./img/recursiontree.png}
+\end{center}
+
+\section{Multiplication}
+How long does it take to multiply 2 $n-digit$ numbers? Eg. $46 \times 324 = 14904$? 
+
+\subsection{Primary School Long Multiplication}
+\textbf{Long Multiplication}, it takes \textbf{$n^2$} multiplications to multiply two $n-digit$ numbers. Thus, it has running time of $\Omega (n^2)$.
+
+\subsection{Russian Peasant Multiplication}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{Mult$(x,y)$}
+\uIf{$x=1$}{output $y$\;}
+\uIf{$x$ is odd}{output $y+Mult(\floor*{\frac{x}{2}},2y)$\;}
+\uIf{$x$ is even}{output $Mult(\frac{x}{2},2y)$\;}
+\caption{Russian Peasant Multiplication}
+\end{algorithm}
+\begin{remark}
+There are $n$ iterations, so we add up to $n$ numbers with at most $2n$ digits each. So the runtime of the algorithm is $O(n^2)$.
+\end{remark}
+
+\subsection{Divide and Conquer Multiplication}
+Let $X = 4132, Y=6703$, So we will have: 
+\begin{align*}
+&X = \overbrace{x_{n}x_{n-1}\cdots x_{\frac{n}{2}+1}}^{X_{L}}\overbrace{x_{\frac{n}{2}}\cdots x_{2}x_{1}}^{X_{R}} \\ &
+Y = \overbrace{y_{n}y_{n-1}\cdots y_{\frac{n}{2}+1}}^{Y_{L}}\overbrace{y_{\frac{n}{2}}\cdots y_{2}y_{1}}^{Y_{R}} \\ &
+\\&
+X = 10^{\frac{n}{2}}\cdot X_{L} + X_{R} \\&
+Y = 10^{\frac{n}{2}}\cdot Y_{L} + Y_{R}
+\end{align*}
+\begin{align*}
+X\cdot Y & = (10^{\frac{n}{2}}\cdot X_{L} + X_{R})\cdot(10^{\frac{n}{2}}\cdot Y_{L} + Y_{R}) \\&
+		   = \underline{10^{n} \cdot X_{L}Y_{L}} + 10^{\frac{n}{2}}\underbrace{(\underline{X_{L}Y_{R}} + \underline{X_{R}Y_{L}})}_{simplify \ this \ term} + \underline{X_{R}Y_{R}} \\
+\end{align*}
+So we have 4 multiplication products with $\frac{n}{2}$ digit numbers. Thus $T(n) = 4\cdot T(\frac{n}{2}) + O(n)$. Here, we may assume that $n$ is a power of $2$. By applying the Master Theorem, which in this case ($a=4, b=2, d=1 \Rightarrow $Case III), we get a runtime of $O(n^{\log_{2} 4}) = O(n^2)$. So far this algorithm is not good. However, we could apply \textbf{Gauss multiplication of complex numbers} to make it more efficient. 
+\subsubsection*{Gauss Multiplying of Complex Numbers}
+Normal way of multiplying of complex numbers looks like: $(a+bi)(c+di) = ac - bd + (bc+ad)i$. However, he observes that $(bc+ad) = (a+b)(c+d) - ac - bd$. This implies that we need only one more product to find $(bc+ad)$, namely $(a+b)(c+d)$. In our case, we could replace $i$ by $10^{\frac{n}{2}}$. So instead we have: 
+\begin{align*}
+(X_{L}Y_{R} + X_{R}Y_{L}) & = (X_{R} + X_{L})\cdot (Y_{R} + Y_{L}) - X_{R}Y_{R}-X_{L}Y_{L} \\&
+							= X_{R}Y_{R} + X_{L}Y_{L} - \underbrace{(X_{R}-X_{L})\cdot (Y_{R} - Y_{L})}_{1 \ multiplication}
+\end{align*}
+So, we end up with 3 products of $\frac{n}{2}$ digit numbers. Now, we have $T(n) = 3\cdot T(\frac{n}{2}) + O(n)$. By applying Master Theorem ($a=3, b=2, d=1$ \Rightarrow Case III), the runtime now is $O(n^{\log_{2} 3}) = O(n^{1.59})$.
+\begin{remark}
+Incredibly, we could multiply two n-digit numbers in time $O(n\cdot \log n)$ using a \textbf{Fast Fourier Transform}(FFT). FFT is used to multiply two polynomial functions and is used in large applications and is one of the most important numerical algorithm of our time. 
+\end{remark}
+
+\section{Multiplication of Matrices}
+How long does it take to multiply 2 $n\times n$ matrices?
+
+\subsection{High School Matrices Multiplication}
+The definition of matrix multiplication is that $C = A\cdot B$ for an $n\times m$ matrix $A$ and an $m\times p$ matrix $B$, then $C$ is an $n\times p$ matrix with entries: \\
+\[
+  c_{ij} = \sum_{k=1}^{m}a_{ik}b_{kj}
+\]
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{Input: Matrix A($n\times m$) and matrix B($m\times p$)}
+\KwResult{C be a matrix of appropriate size ($n\times p$)}
+\For{$i$ from $1$ to $n$}{
+	\For{$j$ from $1$ to $p$}{
+		let sum be 0\;
+		\For{$k$ from $1$ to $m$}{
+			set sum $\leftarrow sum + A_{ik}\times B_{kj}$\;
+		}
+		set $C_{ij} \leftarrow sum$\;
+	}
+}
+Return C\;
+\caption{Standard Matrix Multiplication Algorithm}
+\end{algorithm}
+\begin{remark}
+This algorithm takes $\mathbf{O(nmp)}$. Assume that the matrices are of size $n\times n$, the runtime will be $\mathbf{O(n^3)}$.
+\end{remark}
+
+\subsection{Strassen Algorithm for Matrices Multiplication}
+Assume we have Matrix $A \ and \ B$, and matrix $C$ be their product:
+\[
+A = 
+\begin{bmatrix}
+A & B \\
+C & D
+\end{bmatrix}
+, 
+B = 
+\begin{bmatrix}
+E & F \\
+G & H
+\end{bmatrix}
+,
+C = AB = 
+\begin{bmatrix}
+AE+BG & AF+BH \\
+CE+DG & CF+DH
+\end{bmatrix}
+\]
+
+Strassen Algorithm defines: 
+\begin{align*}
+& S_{1} = (B-D)(G+H) &\\
+& S_{2} = (A+D)(E+H) &\\
+& S_{3} = (A-C)(E+F) &\\
+& S_{4} = (A+B)\cdot H & \\
+& S_{5} = A\cdot (F-H) &\\
+& S_{6} = D\cdot (G-E) &\\
+& S_{7} = (C+D)\cdot E 
+\end{align*}
+Now the matrix C becomes: 
+\[
+	C = 
+	\begin{bmatrix}
+	S_{1}+S_{2}-S_{4}+S_{6} & S_{4}+S_{5} \\
+	S_{6}+S_{7}             & S_{2}-S_{3}+S_{5}-S_{7}
+	\end{bmatrix}
+\]
+Now the multiplying of the matrices involves 7 products instead of 8. The algorithm is now $T(n) = 7\cdot T(\frac{n}{2}) + O(n^2)$, according to Master Theorem ($a=7, b=2, d=2 \Rightarrow $Case III), the runtime now is $O(n^{\log_{2} 7}) = O(n^{2.81})$. 
+
+\begin{remark}
+There is a matrix multiplication algorithm that runs in time $O(n^{2.37})$. \textit{Open question: Is matrix multiplication } $O(^{2+\tau})$ \textit{time for any constant } $\tau > 0$.
+\end{remark}
+
+\section{Fast Exponentiation}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{Input: An unordered list $S$ and the $k-th$ smallest number}
+\KwResult{FastExp($x,n$)}
+\caption{Fast Exponentiation}
+\eIf{$n=1$}{output x}{
+	\uIf{$n$ is even}{
+		output FastExp$(x,\floor*{\frac{n}{2}})^2$
+	}
+	\uIf{$n$ is odd}{
+		output $x$\cdot FastExp$(x,\floor*{\frac{n}{2}})^2$
+	}
+}
+\end{algorithm}
+\begin{remark}
+We have that $T(n) \leq T(\floor*{\frac{n}{2}}) + 2$, so $T(n) = T(\floor*{\frac{n}{2}})+O(1)$ and thus by Master Theorem, the runtime is $O(n^{0}\log n) = O(\log n)$.
+\end{remark}
+
+\subsection{Domain Transformation}
+For MergeSort Algorithm, it actually has the recurrence $\widehat T(n) = \widehat T(\floor*{\frac{n}{2}}) + \widehat T(\ceil*{\frac{n}{2}})+cn$. We used dummy entries ($\bar n$, the smallest power of 2 greater than n). $\widehat T(n) \leq T(\bar n) = O(\bar n\log \bar n) = O(n\log n)$.b
+Let $T(n) = \widehat T(n+2)$. Then: 
+\begin{align*}
+	\widehat T(n) & \leq \widehat T(\frac{n+2}{2}+1) + c(n+2) \\&
+	                \leq \widehat T(\frac{n+2}{2}+1) + \widehat c \\&
+	                = \widehat T(\frac{n}{2}+2) + \widehat cn \\&
+	                = T(\frac{n}{2}) + \widehat cn
+\end{align*}
+
+\section{The Selection Problem}
+\subsection{The Median Problem}
+Suppose that we want to find the median of a set $S = {x_{1}, x_{2},\cdots x_{n}}$, we could just sort the list and then output the $\floor*{\ceil*{n}{2}}-th$ number. Using the MergeSort Algorithm with runtime $O(n\log n)$. Can we do it in a faster way? We need to investigate the Selection Algorithm. 
+
+\subsection{Naive Selection Problem}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{An unordered list $S$, to find the $k-th$ smallest number in list $S$}
+\KwResult{Select($S,k$)}
+\caption{Selection Algorithm}
+\eIf{$|S|=1$}{output $x_{1}$\;}{
+	set $S_{L}=\{x_{i} \in S:x_{i}<x_{1}\}$ set $S_{R}=\{x_{i}\in S\backslash x_{1}:x_{i}\geq x_{1}\}$ \;
+	\uIf{$|S_{L}|=k-1$}{output $x_{1}$\;}
+	\uIf{$|S_{L}| > k-1$}{output Select($S_{L},k$)\;}
+	\uIf{$|S_{L}| < k-1$}{output Select($S_{R},k-1-|S_{L}|$)\;}
+}
+\end{algorithm}
+
+\begin{center}
+\includegraphics[width=90mm]{./img/selection.png}
+\end{center}
+
+\begin{remark}
+The naive Selection Algorithm takes $\Omega(n^2)$. 
+\begin{align*}
+T(n) & = n-1 + T(max\{|S_{L}|,|S_{R}|\}) \\&
+	   = n-1 + T(n-1)\\&
+	   = (n-1) + (n-2) + T(n-2)\\&
+	   = \cdots \\&
+	   = (n-1) + (n-2) + (n-3) + \cdots + 2 + 1\\&
+	   = \frac{1}{2}n(n-1) \\&
+	   \Rightarrow T(n) = \Omega (n^2)
+\end{align*}
+This is the worst case scenario. Since we are just choosing the first element as the pivot, $max\{|S_{L}|,|S_{R}|\} \approx n$. we can improve the efficiency of the algorithm by choosing a better pivot. 
+\end{remark}
+
+\subsubsection*{Good vs Bad Pivot}
+Imagine all the number are in \textbf{sorted} order. 
+\begin{center}
+\includegraphics[width=90mm]{./img/selection2.png}
+\end{center}
+With P(the pivot lies in the first and third quartiles) = $\frac{1}{2}$. We say that such a pivot is good. Otherwise the pivot is bad. Note then $max\{|S_{L}|,|S_{R}|\} \leq \frac{1}{2}n$. In the worst case, the randomized algorithms will pick the worst pivot. So for the randomized algorithms, we are always interested in the \textbf{expected runtime} $\bar{T}(n)=E(T(n))$, NOT the worst case runtime. We have that: 
+\begin{align*}
+\bar{T}(n) & \leq \frac{1}{2}\bar{T}(\frac{3n}{4})+\frac{1}{2}\bar{T}(n)+O(n) \\&
+		     \leq \bar{T}(\frac{3n}{4}) + O(n)
+\end{align*}
+
+When the first term is due to the probability of a good pivot and the second term is due to the probability of a bad pivot. By applying the Master Theorem($a=1,b=\frac{3}{4},c=1$), $\bar{T}(n)=O(n)$.
+
+\subsection{Deterministic Algorithm}
+Is there a linear time deterministic algorithm? To do this, what we need is a deterministic method to find a good pivot. The idea is to find the \textit{Median of the Medians}.
+\subsubsection*{Median of the Medians}
+Divide $S$ into groups of cardinality $5$: \\
+\[
+G_{1}=\{x_{1},\cdots,x_{5}\}, G_{2}=\{x_{6},\cdots,x_{10}\}, G_{\frac{n}{5}}=\{x_{n-4},\cdots,x_{n}\}
+\]\\
+Now, sort each group and let $z_{i}$ be the medians of the group $G_{i}$. Let $m$ be the median of $Z=\{z_{1},\cdots,z_{\frac{n}{5}}\}$. Reorder the groups by their median values. 
+\begin{center}
+\includegraphics[width=110mm]{./img/mom1.png}
+\includegraphics[width=110mm]{./img/mom2.png}
+\end{center}
+
+So,using $m$ as a pivot, we have: ,max$\{|S_{L}|,|S_{R}|\}\leq \frac{7}{10}n$. So, the median of the medians is a good pivot. but how do we actually find the median of the medians? Well, we just use the same deterministic algorithm: \\
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{Input: An unordered list $S$ and the $k-th$ smallest number}
+\KwResult{DetSelect($x,k$)}
+\caption{Deterministic Selection Algorithm}
+\eIf{$|S|=1$}{output $x_{1}$}{
+	Partition $S$ into $\ceil*{\frac{n}{5}}$groups of 5.\;
+	\For{$j=\{1,2,3,\cdots,\ceil*{\frac{n}{5}}\}$}{
+		Let $z_{j}$ be the median of Group $G_{i}$\;
+	}
+	Let $Z=\{z_{1},z_{2},\cdots,z_{\ceil*{\frac{n}{5}}}\}$\;
+	Set $m \leftarrow $ DetSelect($Z,\ceil*{\frac{n}{10}}$)\;
+	Set $S_{L}=\{x_{i} \in S:x_{i}<m\}$ set $S_{R}=\{x_{i}\in S\backslash m:x_{i}\geq m\}$ \;
+	\uIf{$|S_{L}|=k-1$}{output $m$\;}
+	\uIf{$|S_{L}| > k-1$}{output DetSelect($S_{L},k$)\;}
+	\uIf{$|S_{L}| < k-1$}{output DetSelect($S_{R},k-1-|S_{L}|$)\;}
+}
+\end{algorithm}
+\begin{remark}
+By using $m$ as a pivot, we have: $max\{|S_{L}|,|S_{R}|\} \leq \frac{7}{10}\cdot n$. The recursive formula for the running time is then: \\
+\[
+	T(n) \leq T(\frac{7n}{10}) + T(\frac{n}{5}) + O(n)
+\]
+The first term is due to that pivoting on the median of the medians gives a significantly smaller sub-problem. The second term is from finding the median of the medians. The last term is from breaking in groups of 5 and find the median of each group. Pivoting on the median of medians. But this does not fit into the Master Theorem. We can instead simply apply the recursion tree method as shown below. The resulting runtime of the algorithm is $T(n) = O(n)$.
+\begin{center}
+\includegraphics[width=80mm]{./img/detselecttree1.png}
+\includegraphics[width=75mm]{./img/detselecttree2.png}
+\end{center}
+\end{remark}
+\newpage
+
+\section{Finding the Closest Pair of Points in the Plane}
+Given $n$ points $P=\{P_{1},\cdots,P_{n}\}$ in the $XY$ plane, we would like to find the closest pair of points. 
+\subsection{Exhaustive Search}
+The simplest algorithm to try is Exhaustive Search. The idea is to calculate the distance between every pair of points and then output the pair with the shortest pairwise distance. Since there are $n$ points, there are $\binom{n}{2}=\frac{n(n-1)}{2}$ pairs of points and thus the runtime is $O(n^2)$. Is there anything faster?
+\subsection{1D Case and a Naive Approach}
+It will be informative to first examine our problem in one dimension. In one dimension, the closest pair of points must be adjacent in their $x-ordering$. Thus, we need to calculate only $n-1$ pairwise distances, resulting in a runtime of $O(n)$ if the points are sorted in the $x$ coordinate and runtime of $O(n\log n + n) = O(n\log n)$ otherwise. \\
+What happens if we apply this idea in 2 dimensions? Let $x$ coordinate (called the $x-ordering$) and then order the points by their $y$ coordinate (called the $y-ordering$). Then, find the pair of points closest in their $x-coordinate$. And, find the pair of points closest in their $y-coordinate$. From these 2 pairs, output the pair that are closest together. Obviously, this algorithm does not work at all. 
+\subsection{Divide and Conquer Algorithm with a Trick}
+Let's find an algorithm to find the closest pair of points in the plane. \\ \\
+First, partition the points into 2 groups of cardinality $\frac{n}{2}$. We do this via the $x-ordering$, using a dividing line $D$. Select $D$ to pass through the point with the median $x-coordinate$. We can find the median from the previous section in $O(n)$. Now let's recursively search for the closest pairs in $P_{L}$ and $P_{R}$. 
+\begin{center}
+\includegraphics[width=70mm]{./img/pts.png}
+\end{center}
+But there is a third possibility, the closest point could have one point in $P_{L}$ and the other in $P_{R}$. Thus, after calculating $\delta_{L}$ and $\delta_{R}$, we must check that there is no better solution between a point in $P_{L}$ and a point $P_{R}$. We can have a recursive algorithm by now: 
+\begin{enumerate}
+	\item Find the point $q$ with the median $x-coordinate$.
+	\item Partition $P$ into $P_{L}$ and $P_{R}$ using point $q$.
+	\item Recursively find the closest pairs of points in $P_{L}$ and $P_{R}$.
+	\item \underline{Find the closest pair with one point in $P_{L}$ and one point in $P_{R}$.}
+	\item Amongst the 3 pairs found, output the closest pair. 
+\end{enumerate}
+So the recursive formula for the running time is: $T(n)=2\cdot T(\frac{n}{2})+O(n^2)$. For the term $O(n^2)$, there are $\frac{n}{2}$ points in $P_{L}$ and $\frac{n}{2}$ in $P_{R}$, so there are $\frac{n^2}{4}$ pairs of points. Thus, we have $a=2,b=2,d=2$. This is Case I of the Master Theorem. The runtime for the algorithm is $O(n^d)=O(n^2)$.
+
+\subsubsection*{The Bottleneck Step}
+So the bottleneck operation is Step 4 (Find the closest pair with one point in $P_{L}$ and one point in $P_{R}$). We can apply a trick to tackle the bottleneck. So it takes far too long to measure the distance between every point in $P_{L}$ and every point in $P_{R}$. But by solving the subproblems of $P_{L}$ and $P_{R}$, we know the \textbf{minimum pairwise distance} is at most: $\delta = min\{\delta_{L},\delta_{R}\}$. The trick is to use the value of the $\delta$ (which we have calculated by recursion) to reduce the number of distances we measure between $P_{L}$ and $P_{R}$. The key observation is that to find a better solution than $\delta$ the two points in $P_{L}$ and $P_{R}$ must be very close to the \textbf{dividing line D}.
+\begin{center}
+\includegraphics[width=70mm]{./img/geotrick.png}
+\includegraphics[width=28mm]{./img/geotrickproof.png}
+
+\end{center}
+\begin{lemma}
+Take $p_{i}\in P_{L}$ and $p_{j}\in P_{R}$. If $d(p_{i},p_{j}) \leq \delta$ then $(p_{i},p_{j})\subseteq P_{M}$.
+\end{lemma}
+\begin{proof}
+WLOG take $p_{i} \notin P_{M}$. Then, $d(p_{i},p_{j}) > \delta$.
+\end{proof}
+
+\subsubsection{A Modified Recursive Algorithm}
+This include the following \textbf{fine-tuned} divide and conquer algorithm. 
+\begin{enumerate}
+\item Find the point $q$ with the \textbf{median} x-coordinate.
+\item Partition $P$ into $P_{L}$ and $P_{R}$ using point $q$.
+\item Recursively find the closest pairs of points in $P_{L}$ and $P_{R}$. 
+\item \underline{Find the closest pair of points in $P_{M}$}.
+\item Amongst the three pairs found, output the \textbf{closest} pair.
+\end{enumerate}
+However, $P_{M}$ may contain all (or most) of the points. It may still take $\Omega (n^2)$ to measure the distance between the points in $P_{L}\cap P_{M}$ and the points in $P_{R}\cap P_{M}$. The points in $P_{M}$ cover a narrow band of the x-axis. As we have a target distance of $\delta $.
+\begin{center}
+\includegraphics[width=28mm]{./img/geotrick2.png}
+\end{center}
+
+Consider the area of the plane within distance $\delta$ of the line D. Divide the area up into small squares of width $\frac{\delta}{2}$ as shown. We can claim that no two points of $P$ lies in the same square. To prove this claim we will use the following observation: Each square lies entirely on one side of D. 
+\begin{lemma}
+No two points of $P$ lies in the same square.
+\end{lemma}
+\begin{proof}
+WLOG Take two points in a square in $P_{L}$. Their pairwise distance is $\leq \sqrt{(\frac{\delta}{2})^2+(\frac{\delta}{2})^2} = \frac{\delta}{\sqrt{2}} < \delta$. This contradicts the fact that the smallest pairwise distance in $P_{L}$ is at least $\delta$.
+\end{proof}
+
+\begin{theorem}
+Take $p_{i}\in P_{L}$ and $p_{j}\in P_{R}$. If $d(p_{i},p_{j}) \leq \delta$ then $p_{i}$ and $p_{j}$ have at most 10 points between them in the y-order of $P_{M}$.
+\end{theorem}
+\begin{proof}
+WLOG $p_{i}$ is below $p_{j}$ in the y-order. Then $p_{j}$ is in the same row of squares as $p_{i}$ or in the next two higher rows. If not, $d(p_{i},p_{j}) > \delta$, and there is a contradiction. But, by the claim, there is at most one point in each square.  \Rightarrow There are at most 10 points between $p_{i}$ and $p_{j}$ in the y-order of $P_{M}$.
+\end{proof}
+
+So back to the 1-D case. This means the basic idea of the 1-D algorithm will work here! To find the closest pair in $P_{M}$, we first sort the points by their y-coordinate. Then, rather than finding the distance between points that are 1-apart in the y-order, we find the distance for all pairs up to 11 places apart. Thus, we calculate less than $11n$ pairwise distance. After doing so, either we find a pair of points at distance less than $\delta$. Or we conclude that no such pair of points exists. So given $\delta = min\{\delta_{L}, \delta_{R}\}$, we can check if there is a pair of points between $P_{L}$ and $P_{R}$ that are closer than $\delta$ in time $O(n)$.
+
+\subsubsection{An Enhanced Modified Recursive Algorithm}
+Finally, this will give us very fast divide and conquer algorithm. 
+\begin{enumerate}
+\item Find the point $q$ with the \textbf{median} x-coordinate.
+\item Partition $P$ into $P_{L}$ and $P_{R}$ using point $q$.
+\item Recursively find the closest pair of pairs of points in $p_{R}$ and $P_{R}$.
+\item \underline{Find the closest pair of points in $p_{M}$ using the \textbf{enhanced} 1-D algorithm.}
+\item Amongst the three pairs found, output the closest pair. 
+\end{enumerate}
+So the recursive formula for the running time is: $T(n) = 2\cdot T(\frac{n}{2}) + O(n)$. (The last term is due to finding median with respect to x-coordinate; Partition into $P_{L}$ and $P_{M}$; Find $P_{M}$ and apply 1-D algorithm on $P_{M}$.) The runtime of the algorithm is $O(n^{d}\cdot \log n) = O(n\cdot \log n)$.
+
+\subsubsection*{Validity}
+As usual, the correctness of the algorithm follows by \textbf{strong induction}. For the base case, we can find the closest pair in constant time by exhaustive search when there are a constant number of points left. That the \textbf{inductive step} is correct follows by our discussion in the lecture. 
+
+\subsubsection*{Computational Geometry}
+The closest pair of points problem was a fundamental question in the field of \textbf{computational geometry}. Computational geometry has numerous applications in: \textit{Computer Graphics, Computer vision, Geographic Information System, Computer aided Design, Circuit Design, Robotics and Motion Planning, etc.}
+
+\part{Greedy Algorithms}
+\chapter{Scheduling}
+\section{A Brief Overview}
+The simplest class of algorithms are greedy algorithms. They make a locally optimal (or myopic) choice at each step. Greedy algorithms have several nice properties: \textit{Fast, Simple, Easy to Code}. Unfortunately, they are also usually \textit{rubbish}. So for this topic the goal is to understand the basic greedy algorithmic techniques and on which problems do these techniques work.
+
+\section{Task Scheduling}
+A firm receive job orders from $n$ customers. The firm can do only one task at a time. The job of customer $i$ will take the firm $t_{i}$ units of time to complete. Each customer $i$ wants their job completed as early as possible(and will pay accordingly). Assume the firm process the jobs in the order $\{1,2,3\cdots,n\}$. Then the waiting time of customer $i$ will be: $w_{l}=\sum_{i=1}^{l}t_{i}$. So to maximize the profits the objective of the firm is to minimizing the sum of the waiting times: 
+\[
+\sum_{w_{l}}^{n}w_{l}=\sum_{l=1}^{n} \sum_{i=1}^{l} t_{i}
+\]
+Here is a greedy algorithm that solves this problem optimally. \\
+\underline{Greedy Task Scheduling Algorithm}: \\
+Sort the jobs by length $t_{1}\leq t_{2}\leq t_{3}\leq \cdots \leq t_{n}$. 
+\\Schedule the jobs in the order $\{1,2,3,\cdots,n\}$.
+
+\begin{theorem}
+The greedy algorithm outputs an optimal schedule.
+\end{theorem}
+\begin{proof}
+Let the greedy algorithm schedule in the order $\{1,2,\cdots,n\}$. Assume there is a better schedule $S$. Then there must be a pair of jobs $i$ and $j$ such that: 
+\begin{itemize}
+\item Job $i$ is scheduled immediately before job by schedule $S$.
+\item Job $i$ is longer than job $j$: $t_{i}>t_{j}$.
+\end{itemize}
+\begin{center}
+\includegraphics[width=60mm]{./img/schedule.png}
+\end{center}
+But then exchanging the order of jobs $i$ and $j$ gives a better solution $\hat{S}$.
+\begin{center}
+\includegraphics[width=60mm]{./img/schedule2.png}
+\end{center}
+Observe the waiting time of every other job remains the same. $\hat{w_{k}}=w_{k}, \forall k \neq i,j$. But clearly: $\hat{w_{i}}+\hat{w_{j}} < w_{i}+w_{j}$. This contradicts the assumption that $S$ was an optimal schedule. 
+\end{proof}
+\begin{remark}
+In order to optimize the scheduling process, we need only sort $n$ time lengths.
+\begin{center}
+$\Rightarrow$ Runtime = $O(n\cdot \log n)$. 
+\end{center}
+So this algorithm is efficient.
+\end{remark}
+\section{Class Scheduling}
+There is one classroom. There is a set $I=\{1,2,3,\cdots,n\}$ of classes that request room. Class $i$ has a start time $S_{i}$ and a finish time $f_{i}$. The objective is to book as many classes into the room as possible. However, we cannot book two classes that need to use the room at exactly the same time. This problem is often called the \textbf{Interval Selection Problem}, as we can plot the classes as intervals between their start and finish time. 
+\begin{center}
+\includegraphics[width=60mm]{./img/classschedule.png}
+\end{center}
+\subsection{First Start}
+Select the class that starts earliest, and iterate on the remaining classes that do not conflict with this selection. 
+\begin{center}
+\includegraphics[width=60mm]{./img/1ststart.png}
+\end{center}
+This doesn't work since the first class might be the longest.
+
+\subsection{Shortest-Duration}
+Select the class of shortest duration, and iterate on the remaining classes that do not conflict with this selection.
+\begin{center}
+\includegraphics[width=60mm]{./img/shortestduration.png}
+\end{center}
+This doesn't work because it might be in an unlucky position.
+
+\subsection{Minimum-Conflict}
+Select the class that conflicts with the fewest number of classes, and then iterate.
+\begin{center}
+\includegraphics[width=60mm]{./img/minconflict.png}
+\end{center}
+Here the optimal solution has 4 classes, but we chose the configuration that has only 3, we chose i since i conflicts with only 2, whereas the red ones all conflict with 3 or 4. Next time we iterate, we just have two stacks of 3, so we can choose any from the left or right, and we’re stukc with having at most 3 classes in our solution
+
+\subsection{Last Start}
+Select the class that starts last, and iterate on the classes that do not conflict with this selection. It outputs the optimal schedule. This algorithm is symmetric to the following greedy algorithm: \textbf{First Finish}. Select the class that finishes first, and iterate on the classes that do not conflict with this selection. 
+\subsubsection*{First-Finish Greedy Scheduling}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{FirstFinish(I)}
+\caption{First Finish Greedy Scheduling}
+Let class 1 be the class with the earliest finish time\;
+let X be the set of classes that clash with class 1\;
+Output $\{1\}\cup$ FirstFinish(I\setminus X)\;
+\end{algorithm}
+
+\subsubsection*{First-Finish Greedy Scheduling (Revisited)}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{FirstFinish(I)}
+\caption{First Finish Greedy Scheduling (revisited)}
+Sort the classes by finish times $f_{1}\leq f_{2}\leq \cdots \leq f_{n}$\;
+Initialize the set of selected classes: $S=\emptyset$\;
+Initialize the set of undecided class requests: $I=\{1,2,3,\cdots,n\}$\;
+\While{I\neq \emptyset}{
+	Let $i$ be the lowest index class in $I$\;
+	Set $S\leftarrow S\cup \{i\}$ and $I\leftarrow I\setminus\{i\}$\;
+	\For{Each class $j\in I$}{
+		\uIf{$s_{j}<f_{i}$}{
+			Set $I\leftarrow I\setminus\{j\}$\;
+		}
+	}
+}
+Output $S$\;
+\end{algorithm}
+\begin{remark}
+There are at most $n$ iterations. It takes $O(n)$ time to find class that finishes earliest in each iteration. 
+\begin{center}
+$\Rightarrow Runtime = O(n^2)$
+\end{center}
+But there is a very crude analysis. With a more subtle implementation and analysis we can obtain a running time of $O(n\cdot \log n)$.
+\end{remark}
+
+\section{The Shortest Path Algorithm}
+
+
+
+\part{Dynamic Programming}
+\chapter{Dynamic Programming}
+
+\part{Network Problem}
+\chapter{Max-Min Cut problem}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
